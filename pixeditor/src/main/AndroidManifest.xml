@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.fxn.pixeditor">
+
+
+    <application>
+        <activity android:name=".PixEditor">
+        </activity>
+
+        <activity
+                android:name=".imageeditengine.ImageEditActivity"
+                android:windowSoftInputMode="adjustNothing">
+        </activity>
+    </application>
+
+</manifest>
