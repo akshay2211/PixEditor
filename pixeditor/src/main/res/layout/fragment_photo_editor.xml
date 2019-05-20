@@ -5,6 +5,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@+id/majorContainer"
         android:background="@android:color/black"
         android:fitsSystemWindows="true"
 >
@@ -24,7 +25,20 @@
             android:layout_height="match_parent"
             android:visibility="visible"
     />
+    <ImageView
+            android:id="@+id/topPaddingView"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#000"
+    />
 
+    <ImageView
+            android:id="@+id/bottomPaddingView"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:background="#000"
+    />
     <ImageView
             android:id="@+id/delete_view"
             android:layout_width="wrap_content"

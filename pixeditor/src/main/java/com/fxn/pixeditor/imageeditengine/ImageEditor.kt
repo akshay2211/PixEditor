@@ -22,6 +22,7 @@ object ImageEditor {
     val EXTRA_IMAGE_PATH = "EXTRA_IMAGE_PATH"
     val EXTRA_ORIGINAL = "EXTRA_ORIGINAL"
     val EXTRA_CROP_RECT = "EXTRA_CROP_RECT"
+    val EXTRA_START = "EXTRA_START_WHAT"
 
     val EXTRA_EDITED_PATH = "EXTRA_EDITED_PATH"
 
@@ -31,8 +32,8 @@ object ImageEditor {
         private var stickerFolderName: String? = null
         private var enabledEditorText = true
         private var enabledEditorPaint = true
-        private var enabledEditorSticker = false
-        private var enableEditorCrop = false
+        private var enabledEditorSticker = true
+        private var enableEditorCrop = true
         private var enableFilters = true
 
         fun setStickerAssets(folderName: String): Builder {
@@ -53,7 +54,6 @@ object ImageEditor {
             } else if (editorType == EDITOR_FILTERS) {
                 enableFilters = false
             }
-
             return this
         }
 

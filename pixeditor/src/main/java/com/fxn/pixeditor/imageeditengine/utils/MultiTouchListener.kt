@@ -9,19 +9,23 @@ import android.view.View.OnTouchListener
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.annotation.Nullable
 import com.fxn.pixeditor.imageeditengine.views.ViewTouchListener
 
 /**
  * Created by Burhanuddin Rashid on 18/01/2017.
  */
 class MultiTouchListener(
-    @param:Nullable private val deleteView: View?, private val parentView: RelativeLayout,
-    private val photoEditImageView: ImageView, private val mIsTextPinchZoomable: Boolean,
+    private val topImageView: ImageView,
+    private val bottomImageView: ImageView,
+    private val deleteView: View?,
+    private val parentView: RelativeLayout,
+    private val photoEditImageView: ImageView,
+    private val mIsTextPinchZoomable: Boolean,
     private val viewTouchListener: ViewTouchListener?
 ) : OnTouchListener {
     private val mGestureListener: GestureDetector
     private val isRotateEnabled = true
+
     private val isTranslateEnabled = true
     private val isScaleEnabled = true
     private val minimumScale = 0.5f
@@ -41,6 +45,7 @@ class MultiTouchListener(
     private var currentView: View? = null
 
     init {
+
         mScaleGestureDetector = ScaleGestureDetector(ScaleGestureListener())
         mGestureListener = GestureDetector(GestureListener())
         //this.mOnPhotoEditorListener = onPhotoEditorListener;
@@ -70,6 +75,9 @@ class MultiTouchListener(
 
         when (action and event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
+                topImageView.alpha = 0.5f
+                bottomImageView.alpha = 0.5f
+                Log.e("action", "ACTION_DOWN")
                 mPrevX = event.x
                 mPrevY = event.y
                 mPrevRawX = event.rawX
@@ -82,6 +90,7 @@ class MultiTouchListener(
                 firePhotoEditorSDKListener(view, true)
             }
             MotionEvent.ACTION_MOVE -> {
+                Log.e("action", "ACTION_MOVE")
                 val pointerIndexMove = event.findPointerIndex(mActivePointerId)
                 if (pointerIndexMove != -1) {
                     val currX = event.getX(pointerIndexMove)
@@ -95,8 +104,16 @@ class MultiTouchListener(
                     }
                 }
             }
-            MotionEvent.ACTION_CANCEL -> mActivePointerId = INVALID_POINTER_ID
+            MotionEvent.ACTION_CANCEL -> {
+                topImageView.alpha = 1f
+                bottomImageView.alpha = 1f
+                Log.e("action", "ACTION_CANCEL")
+                mActivePointerId = INVALID_POINTER_ID
+            }
             MotionEvent.ACTION_UP -> {
+                topImageView.alpha = 1f
+                bottomImageView.alpha = 1f
+                Log.e("action", "ACTION_UP")
                 mActivePointerId = INVALID_POINTER_ID
                 if (deleteView != null && isViewInBounds(
                         deleteView, view.x.toInt(), view.y.toInt(),

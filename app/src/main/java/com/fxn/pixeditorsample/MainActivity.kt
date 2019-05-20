@@ -8,13 +8,15 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
-import com.fxn.pixeditor.imageeditengine.ImageEditor
+import com.fxn.pixeditor.EditOptions
+import com.fxn.pixeditor.PixEditor
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
 
     private val RequestCode: Int = 100
+    private val RequestCodeEditor: Int = 101
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,17 +24,22 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         fab.setOnClickListener { view ->
-            Pix.start(this@MainActivity, Options.init().setRequestCode(RequestCode))
+            Pix.start(this@MainActivity, Options.init().setRequestCode(RequestCode).setCount(5))
         }
     }
 
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == RequestCode) {
+    public override fun onActivityResult(requestCode1: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode1, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && requestCode1 == RequestCode) {
             val returnValue = data!!.getStringArrayListExtra(Pix.IMAGE_RESULTS)
-            ImageEditor.Builder(this, returnValue[0])
-                .setStickerAssets("stickers")
-                .open()
+            PixEditor.start(this@MainActivity, EditOptions.init().apply {
+                requestCode = RequestCodeEditor
+                selectedlist = returnValue
+
+            })
+            /* ImageEditor.Builder(this, returnValue[0])
+                 .setStickerAssets("stickers")
+                 .open()*/
         }
     }
 

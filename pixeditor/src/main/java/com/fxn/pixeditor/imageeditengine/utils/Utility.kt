@@ -4,18 +4,27 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.os.Build
+import android.util.DisplayMetrics
 import android.view.View
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import com.fxn.pixeditor.PixEditor
 
 import java.io.File
 import java.io.FileOutputStream
 
 object Utility {
-
+    fun convertDpToPixel(dp: Float, context: Context): Float {
+        val resources = context.resources
+        val metrics = resources.displayMetrics
+        return dp * (metrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
+    }
     //public static Drawable tintDrawable(Context context, @DrawableRes int drawableRes, @ColorRes int colorRes){
     //  Drawable drawable = ContextCompat.getDrawable(context,drawableRes);
     //  if(drawable!=null) {
@@ -120,4 +129,23 @@ object Utility {
         options.inJustDecodeBounds = false
         return BitmapFactory.decodeFile(imagePath, options)
     }
+
+    fun hideTopBar(pixEditor: PixEditor) {
+        val window = pixEditor.window
+        // clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        // finally change the color
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.statusBarColor = Color.BLACK
+        }
+        try {
+            pixEditor.supportActionBar!!.hide()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+    }
+
 }

@@ -7,12 +7,14 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Rect
 import android.graphics.RectF
+import android.os.Handler
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.FrameLayout
@@ -39,10 +41,12 @@ class PhotoEditorView : FrameLayout, ViewTouchListener, KeyboardHeightProvider.K
     private var viewTouchListener: ViewTouchListener? = null
     private var selectedView: View? = null
     private var selectViewIndex: Int = 0
-    private var inputTextET: EditText? = null
+    lateinit var inputTextET: EditText
     private var keyboardHeightProvider: KeyboardHeightProvider? = null
     private var initialY: Float = 0.toFloat()
     private var containerView: View? = null
+    private var bottomImageView: ImageView? = null
+    private var topImageView: ImageView? = null
 
     var color: Int
         get() = customPaintView.color
@@ -71,39 +75,74 @@ class PhotoEditorView : FrameLayout, ViewTouchListener, KeyboardHeightProvider.K
         containerView = view.findViewById(R.id.container_view)
         recyclerView = view.findViewById(R.id.recyclerview)
         inputTextET = view.findViewById(R.id.add_text_et)
+        // Log.e("has sft ","keyboard "+isNavigationBarAvailable());
+        /*  if (ImageEditActivity.hasSoftKeys) {
+      RelativeLayout.LayoutParams layoutParams =
+          (RelativeLayout.LayoutParams) inputTextET.getLayoutParams();
+      ((RelativeLayout.LayoutParams) layoutParams).bottomMargin = inputTextET.getHeight() * 2;
+      inputTextET.setLayoutParams(layoutParams);
+    }*/
         customPaintView = view.findViewById(R.id.paint_view)
-        inputTextET!!.setOnEditorActionListener { textView, actionId, keyEvent ->
+        inputTextET.setOnEditorActionListener { textView, actionId, keyEvent ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                if (selectedView != null) {
-                    (selectedView as AutofitTextView).setText(inputTextET!!.text)
-                    Utility.hideSoftKeyboard(getContext() as Activity)
-                } else {
-                    createText(inputTextET!!.text.toString())
-                    Utility.hideSoftKeyboard(getContext() as Activity)
+                try {
+                    if (selectedView != null) {
+                        (selectedView as AutofitTextView).text = inputTextET.text
+                        Utility.hideSoftKeyboard(getContext() as Activity)
+                    } else {
+                        createText(inputTextET.text.toString())
+                        Utility.hideSoftKeyboard(getContext() as Activity)
+                    }
+                    inputTextET.visibility = View.INVISIBLE
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
-                inputTextET!!.visibility = View.INVISIBLE
+
             }
             false
         }
         keyboardHeightProvider = KeyboardHeightProvider(getContext() as Activity)
         keyboardHeightProvider!!.setKeyboardHeightObserver(this)
 
-        val gridLayoutManager = GridLayoutManager(getContext(), 3)
+        val gridLayoutManager = GridLayoutManager(getContext(), 4)
         recyclerView.setLayoutManager(gridLayoutManager)
 
         val stickerAdapter = StickerListAdapter(ArrayList())
         recyclerView.setAdapter(stickerAdapter)
 
         view.post { keyboardHeightProvider!!.start() }
-        inputTextET!!.post { initialY = inputTextET!!.y }
+
+        /*  inputTextET.post(new Runnable() {
+      @Override
+      public void run() {
+
+        if (initialY==0.0){
+          initialY = inputTextET.getY();
+        }
+      }
+    });*/
+        inputTextET.viewTreeObserver.addOnGlobalLayoutListener(
+            object : ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    // Layout has happened here.
+                    initialY = inputTextET.y
+                    Log.e("initialY", "---------------->$initialY")
+                    // Don't forget to remove your listener when you are done with it.
+                    inputTextET.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+                }
+            })
         addView(view)
     }
 
     fun showPaintView() {
+        bottomImageView!!.visibility = View.VISIBLE
+        topImageView!!.visibility = View.VISIBLE
         recyclerView.setVisibility(View.GONE)
-        inputTextET!!.visibility = View.GONE
+        inputTextET.visibility = View.GONE
         Utility.hideSoftKeyboard(context as Activity)
         customPaintView.bringToFront()
+        customPaintView.isEnabled = true
     }
 
     fun setBounds(bitmapRect: RectF) {
@@ -111,46 +150,72 @@ class PhotoEditorView : FrameLayout, ViewTouchListener, KeyboardHeightProvider.K
     }
 
     fun hidePaintView() {
-        containerView!!.bringToFront()
+        // containerView.bringToFront();
+        customPaintView.isEnabled = false
     }
 
     //text mode methods
     fun setImageView(
-        imageView: ImageView, deleteButton: ImageView,
+        topImageView: ImageView, bottomImageView: ImageView, imageView: ImageView, deleteButton: ImageView,
         viewTouchListener: ViewTouchListener
     ) {
         this.imageView = imageView
+        this.topImageView = topImageView
+        this.bottomImageView = bottomImageView
         this.deleteView = deleteButton
         this.viewTouchListener = viewTouchListener
     }
 
     fun setTextColor(selectedColor: Int) {
-        var autofitTextView: AutofitTextView? = null
-        if (selectedView != null) {
-            autofitTextView = selectedView as AutofitTextView?
-            autofitTextView!!.setTextColor(selectedColor)
-        } else {
-            val view = getViewChildAt(selectViewIndex)
-            if (view != null && view is AutofitTextView) {
-                autofitTextView = view
-                autofitTextView.setTextColor(selectedColor)
+        try {
+            var autofitTextView: AutofitTextView? = null
+            if (selectedView != null) {
+                autofitTextView = selectedView as AutofitTextView?
+                autofitTextView!!.setTextColor(selectedColor)
+            } else {
+                val view = getViewChildAt(selectViewIndex)
+                if (view != null && view is AutofitTextView) {
+                    autofitTextView = view
+                    autofitTextView.setTextColor(selectedColor)
+                }
             }
+            inputTextET.setTextColor(selectedColor)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        inputTextET!!.setTextColor(selectedColor)
+
     }
 
     @SuppressLint("ClickableViewAccessibility")
     fun addText() {
-        inputTextET!!.visibility = View.VISIBLE
+        inputTextET.visibility = View.VISIBLE
+        inputTextET.viewTreeObserver.addOnGlobalLayoutListener(
+            object : ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    // Layout has happened here.
+                    initialY = inputTextET.y
+                    Log.e("initialY", "---------------->$initialY")
+                    // Don't forget to remove your listener when you are done with it.
+                    inputTextET.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+                }
+            })
+        bottomImageView!!.visibility = View.VISIBLE
+        topImageView!!.visibility = View.VISIBLE
         recyclerView.setVisibility(View.GONE)
         containerView!!.bringToFront()
-        inputTextET!!.setText(null)
-        Utility.showSoftKeyboard(context as Activity, inputTextET!!)
+        //containerView.bringToFront();
+        inputTextET.setText("")
+        Handler().postDelayed({
+            inputTextET.bringToFront()
+
+            Utility.showSoftKeyboard(context as Activity, inputTextET)
+        }, 100)
     }
 
     fun hideTextMode() {
         Utility.hideSoftKeyboard(context as Activity)
-        inputTextET!!.visibility = View.INVISIBLE
+        inputTextET.visibility = View.INVISIBLE
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -162,17 +227,18 @@ class PhotoEditorView : FrameLayout, ViewTouchListener, KeyboardHeightProvider.K
     @SuppressLint("ClickableViewAccessibility")
     private fun createText(text: String) {
         val autofitTextView = LayoutInflater.from(context).inflate(R.layout.text_editor, null) as AutofitTextView
-        autofitTextView.setId(container.childCount)
-        autofitTextView.setText(text)
-        autofitTextView.setTextColor(inputTextET!!.currentTextColor)
+        autofitTextView.id = container.childCount
+        autofitTextView.text = text
+        autofitTextView.setTextColor(inputTextET.currentTextColor)
         autofitTextView.setMaxTextSize(Dimension.SP, 50f)
-        val multiTouchListener = MultiTouchListener(deleteView, container, this.imageView!!, true, this)
+        val multiTouchListener =
+            MultiTouchListener(topImageView!!, bottomImageView!!, deleteView, container, this.imageView!!, true, this)
         multiTouchListener.setOnMultiTouchListener(object : MultiTouchListener.OnMultiTouchListener {
 
             override fun onRemoveViewListener(removedView: View) {
                 container.removeView(removedView)
-                inputTextET!!.setText(null)
-                inputTextET!!.visibility = View.INVISIBLE
+                inputTextET.setText(null)
+                inputTextET.visibility = View.INVISIBLE
                 selectedView = null
             }
         })
@@ -181,13 +247,13 @@ class PhotoEditorView : FrameLayout, ViewTouchListener, KeyboardHeightProvider.K
                 if (currentView != null) {
                     selectedView = currentView
                     selectViewIndex = currentView.id
-                    inputTextET!!.visibility = View.VISIBLE
-                    inputTextET!!.setText((currentView as AutofitTextView).getText())
-                    inputTextET!!.setSelection(inputTextET!!.text.length)
-                    Log.i("ViewNum", ":" + selectViewIndex + " " + (currentView as AutofitTextView).getText())
+                    inputTextET.visibility = View.VISIBLE
+                    inputTextET.setText((currentView as AutofitTextView).text)
+                    inputTextET.setSelection(inputTextET.text.length)
+                    Log.i("ViewNum", ":" + selectViewIndex + " " + currentView.text)
                 }
 
-                Utility.showSoftKeyboard(context as Activity, inputTextET!!)
+                Utility.showSoftKeyboard(context as Activity, inputTextET)
             }
 
             override fun onLongClick() {
@@ -227,15 +293,21 @@ class PhotoEditorView : FrameLayout, ViewTouchListener, KeyboardHeightProvider.K
     }
 
     override fun onKeyboardHeightChanged(height: Int, orientation: Int) {
-        if (height == 0) {
-            inputTextET!!.y = initialY
-            inputTextET!!.requestLayout()
-        } else {
+        Handler().postDelayed({
+            if (initialY == 0f && inputTextET.y != 0f) {
+            }
+            Log.e("check", "initialY ->$initialY  height-> $height")
 
-            val newPosition = initialY - height
-            inputTextET!!.y = newPosition
-            inputTextET!!.requestLayout()
-        }
+            if (height == 0) {
+                inputTextET.y = initialY
+                inputTextET.requestLayout()
+            } else {
+                val newPosition = initialY - height
+                inputTextET.y = newPosition
+                inputTextET.requestLayout()
+            }
+        }, 200)
+
     }
 
     override fun onDetachedFromWindow() {
@@ -244,9 +316,12 @@ class PhotoEditorView : FrameLayout, ViewTouchListener, KeyboardHeightProvider.K
     }
 
     fun showStickers(stickersFolder: String) {
+
+        bottomImageView!!.visibility = View.GONE
+        topImageView!!.visibility = View.GONE
         containerView!!.bringToFront()
         recyclerView.setVisibility(View.VISIBLE)
-        inputTextET!!.visibility = View.GONE
+        inputTextET.visibility = View.GONE
         Utility.hideSoftKeyboard(context as Activity)
         this.folderName = stickersFolder
         val stickerListAdapter = recyclerView.getAdapter() as StickerListAdapter
@@ -261,7 +336,24 @@ class PhotoEditorView : FrameLayout, ViewTouchListener, KeyboardHeightProvider.K
         val assetManager = context.assets
         try {
             val lists = assetManager.list(folderName)
-            return Arrays.asList(*lists)
+            val mylist = Arrays.asList(*lists)
+            try {
+                Collections.sort(mylist, object : Comparator<String> {
+                    override fun compare(o1: String, o2: String): Int {
+                        return extractInt(o1) - extractInt(o2)
+                    }
+
+                    internal fun extractInt(s: String): Int {
+                        val num = s.replace("\\D".toRegex(), "")
+                        // return 0 if no digits found
+                        return if (num.isEmpty()) 0 else Integer.parseInt(num)
+                    }
+                })
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+            return mylist
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -272,10 +364,13 @@ class PhotoEditorView : FrameLayout, ViewTouchListener, KeyboardHeightProvider.K
     @SuppressLint("ClickableViewAccessibility")
     fun onItemClick(bitmap: Bitmap?) {
         recyclerView.setVisibility(View.GONE)
+        bottomImageView!!.visibility = View.VISIBLE
+        topImageView!!.visibility = View.VISIBLE
         val stickerImageView = LayoutInflater.from(context).inflate(R.layout.sticker_view, null) as ImageView
         stickerImageView.setImageBitmap(bitmap)
         stickerImageView.id = container.childCount
-        val multiTouchListener = MultiTouchListener(deleteView, container, this.imageView!!, true, this)
+        val multiTouchListener =
+            MultiTouchListener(topImageView!!, bottomImageView!!, deleteView, container, this.imageView!!, true, this)
         multiTouchListener.setOnMultiTouchListener(object : MultiTouchListener.OnMultiTouchListener {
 
             override fun onRemoveViewListener(removedView: View) {
@@ -319,7 +414,6 @@ class PhotoEditorView : FrameLayout, ViewTouchListener, KeyboardHeightProvider.K
 
     inner class StickerListAdapter(list: ArrayList<String>) : RecyclerView.Adapter<StickerListAdapter.ViewHolder>() {
         override fun getItemCount(): Int {
-
             return stickers!!.size
         }
 
