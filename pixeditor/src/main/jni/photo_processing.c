@@ -29,6 +29,7 @@ static Bitmap bitmap;
 //Java_com_fxn_pixeditor_imageeditengine_filter_PhotoProcessing
 //com.fxn.pixeditor.imageeditengine
 int Java_com_fxn_pixeditor_imageeditengine_filter_PhotoProcessing_nativeInitBitmap(JNIEnv* env, jobject thiz, jint width, jint height) {
+	//System.out.print("hello error here");
 	return initBitmapMemory(&bitmap, width, height);
 }
 

@@ -61,9 +61,9 @@ class FilterTouchListener(
             MotionEvent.ACTION_UP -> {
 
                 yPost = e.rawY - mMotionDownY
-                Log.i(FilterTouchListener::class.java.simpleName, "ACTION_UP$yPost")
                 val middle = viewHeight / 2
                 val diff = screenHeight - mView.y
+                Log.e(FilterTouchListener::class.java.simpleName, "ACTION_UP$yPost $diff $middle")
                 if (diff < middle) {
                     mView.animate().translationY(viewHeight)
                     mainImageView.animate().scaleX(1f)
