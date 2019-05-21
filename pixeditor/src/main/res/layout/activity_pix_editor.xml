@@ -5,14 +5,29 @@
         android:layout_width="match_parent"
         xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_height="match_parent"
         android:background="#FF000000"
+        android:id="@+id/majorContainer"
         tools:context=".PixEditor">
-    <androidx.viewpager.widget.ViewPager
+    <com.fxn.pixeditor.imageeditengine.views.CustomViewPager
             android:layout_weight="1"
             android:id="@+id/mainViewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-    </androidx.viewpager.widget.ViewPager>
+    </com.fxn.pixeditor.imageeditengine.views.CustomViewPager>
+    <ImageView
+            android:id="@+id/topPaddingView"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#000"
+    />
+
+    <ImageView
+            android:id="@+id/bottomPaddingView"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:background="#000"
+    />
     <LinearLayout
             android:layout_alignParentBottom="true"
             android:background="#80000000"
@@ -44,6 +59,7 @@
             android:visibility="gone"
             tools:ignore="MissingPrefix"
     />
+
 
     <RelativeLayout
             android:id="@+id/toolbar_layout"

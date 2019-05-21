@@ -138,7 +138,7 @@ class PhotoEditorView : FrameLayout, ViewTouchListener, KeyboardHeightProvider.K
     fun showPaintView() {
         bottomImageView!!.visibility = View.VISIBLE
         topImageView!!.visibility = View.VISIBLE
-        recyclerView.setVisibility(View.GONE)
+        recyclerView.visibility = View.GONE
         inputTextET.visibility = View.GONE
         Utility.hideSoftKeyboard(context as Activity)
         customPaintView.bringToFront()
@@ -150,7 +150,7 @@ class PhotoEditorView : FrameLayout, ViewTouchListener, KeyboardHeightProvider.K
     }
 
     fun hidePaintView() {
-        // containerView.bringToFront();
+        containerView!!.bringToFront()
         customPaintView.isEnabled = false
     }
 

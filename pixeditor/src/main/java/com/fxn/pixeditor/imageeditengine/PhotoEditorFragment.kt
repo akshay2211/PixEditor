@@ -121,7 +121,8 @@ class PhotoEditorFragment : BaseFragment(), View.OnClickListener, ViewTouchListe
     }
     fun setImageBitmap(bitmap: Bitmap?) {
         mainImageView.setImageBitmap(bitmap)
-        mainImageView.post(Runnable {
+
+        mainImageView.post {
             if (bitmap != null) {
                 height = majorContainer!!.height
                 val layouparams = topPaddingView.layoutParams
@@ -132,7 +133,7 @@ class PhotoEditorFragment : BaseFragment(), View.OnClickListener, ViewTouchListe
                 bottomPaddingView.layoutParams = layouparams1
                 photoEditorView.setBounds(mainImageView.bitmapRect!!)
             }
-        })
+        }
     }
 
     fun setImageWithRect(rect: Rect) {
@@ -261,7 +262,7 @@ class PhotoEditorFragment : BaseFragment(), View.OnClickListener, ViewTouchListe
                         setImageBitmap(mainBitmap)
                         GetFiltersTask(object : TaskCallback<ArrayList<ImageFilter>> {
                             override fun onTaskDone(data: ArrayList<ImageFilter>) {
-                                val filterImageAdapter = filterRecylerview.getAdapter() as FilterImageAdapter
+                                val filterImageAdapter = filterRecylerview.adapter as FilterImageAdapter
                                 if (filterImageAdapter != null) {
                                     filterImageAdapter!!.setData(data)
                                     filterImageAdapter!!.notifyDataSetChanged()
