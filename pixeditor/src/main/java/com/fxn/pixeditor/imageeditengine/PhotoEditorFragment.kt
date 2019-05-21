@@ -537,7 +537,7 @@ class PhotoEditorFragment : BaseFragment(), View.OnClickListener, ViewTouchListe
         return resultBit
     }
 
-    override fun onFilterSelected(imageFilter: ImageFilter) {
+    override fun onFilterSelected(imageFilter: ImageFilter, pos: Int) {
         selectedFilter = imageFilter
         ApplyFilterTask(object : TaskCallback<Bitmap> {
             override fun onTaskDone(data: Bitmap) {

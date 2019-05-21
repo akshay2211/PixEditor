@@ -21,14 +21,14 @@ class FilterImageAdapter(list: ArrayList<ImageFilter>, private val mListener: Fi
 
 
     private var imageFilters: MutableList<ImageFilter>? = null
-    private var lastCheckedPostion = 0
+    public var lastCheckedPostion = 0
 
     override fun getItemCount(): Int {
         return imageFilters!!.size
     }
 
     interface FilterImageAdapterListener {
-        fun onFilterSelected(imageFilter: ImageFilter)
+        fun onFilterSelected(imageFilter: ImageFilter, pos: Int)
     }
 
     init {
@@ -97,10 +97,9 @@ class FilterImageAdapter(list: ArrayList<ImageFilter>, private val mListener: Fi
         }
         //layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
         holder.filterIV.layoutParams = layoutParams
-
         holder.filterTv.setText(imageFilter.filterName)
         holder.itemView.setOnClickListener(View.OnClickListener {
-            mListener.onFilterSelected(imageFilter)
+            mListener.onFilterSelected(imageFilter, position)
             val lastPosition = lastCheckedPostion
             holder.checkbox.visibility = View.VISIBLE
 
@@ -110,8 +109,6 @@ class FilterImageAdapter(list: ArrayList<ImageFilter>, private val mListener: Fi
             )
             //layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
             holder.filterIV.layoutParams = layoutParams
-
-
             lastCheckedPostion = holder.getAdapterPosition()
             notifyItemChanged(lastPosition)
         })

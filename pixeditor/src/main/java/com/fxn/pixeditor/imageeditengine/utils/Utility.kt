@@ -12,10 +12,9 @@ import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.DrawableRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
-import com.fxn.pixeditor.PixEditor
-
 import java.io.File
 import java.io.FileOutputStream
 
@@ -130,7 +129,7 @@ object Utility {
         return BitmapFactory.decodeFile(imagePath, options)
     }
 
-    fun hideTopBar(pixEditor: PixEditor) {
+    fun hideTopBar(pixEditor: AppCompatActivity) {
         val window = pixEditor.window
         // clear FLAG_TRANSLUCENT_STATUS flag:
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)

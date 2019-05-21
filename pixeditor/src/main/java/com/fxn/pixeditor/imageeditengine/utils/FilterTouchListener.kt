@@ -6,7 +6,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
-import androidx.viewpager.widget.ViewPager
+import com.fxn.pixeditor.imageeditengine.views.CustomViewPager
 import com.fxn.pixeditor.imageeditengine.views.PhotoEditorView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -20,7 +20,7 @@ class FilterTouchListener(
     private val photoEditorView: PhotoEditorView,
     private val filterLabel: View,
     private val doneBtn: FloatingActionButton,
-    private val mainViewPager: ViewPager
+    private val mainViewPager: CustomViewPager
 ) : View.OnTouchListener {
     private val screenHeight: Int
     private var mMotionDownY: Float = 0.toFloat()
@@ -57,7 +57,7 @@ class FilterTouchListener(
                 if (yPost >= 0 && yPost < viewHeight) {
                     mView.translationY = yPost
                     filterLabel.alpha = Math.abs(yPost) / 1000
-                    doneBtn.setAlpha(Math.abs(yPost) / 1000)
+                    doneBtn.alpha = Math.abs(yPost) / 1000
                     //mainImageView.setScaleX(1f-Math.abs(yPost)/1000);
                     //mainImageView.setScaleY(1f-Math.abs(yPost)/1000);
                     Log.i(FilterTouchListener::class.java.simpleName, "moved")
@@ -71,7 +71,7 @@ class FilterTouchListener(
                 val diff = screenHeight - mView.y
                 Log.e(FilterTouchListener::class.java.simpleName, "ACTION_UP$yPost $diff $middle")
                 if (diff < middle) {
-
+                    mainViewPager.scrollerEnabled = true
                     mView.animate().translationY(viewHeight)
                     mainImageView.animate().scaleX(1f)
                     mainImageView.animate().scaleY(1f)
@@ -80,7 +80,7 @@ class FilterTouchListener(
                     filterLabel.animate().alpha(1f)
                     doneBtn.animate().alpha(1f)
                 } else {
-
+                    mainViewPager.scrollerEnabled = false
                     mView.animate().translationY(0f)
                     mainImageView.animate().scaleX(0.7f)
                     mainImageView.animate().scaleY(0.7f)

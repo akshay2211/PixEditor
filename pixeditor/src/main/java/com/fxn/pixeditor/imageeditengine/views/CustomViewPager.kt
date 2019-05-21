@@ -7,7 +7,7 @@ import androidx.viewpager.widget.ViewPager
 
 class CustomViewPager(context: Context, attrs: AttributeSet) : ViewPager(context, attrs) {
 
-    var scrollerEnabled = false
+    var scrollerEnabled = true
 
 
     override fun onTouchEvent(event: MotionEvent): Boolean {

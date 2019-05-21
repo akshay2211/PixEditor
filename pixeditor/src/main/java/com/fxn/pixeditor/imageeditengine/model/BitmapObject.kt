@@ -7,4 +7,5 @@ class BitmapObject(val path: String) {
     public var photoOrignal: File? = null
     public var orignalBitmap: Bitmap? = null
     public var mainBitmap: Bitmap? = null
+    public var filterSelection: Int = 0
 }

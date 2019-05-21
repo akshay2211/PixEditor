@@ -4,9 +4,15 @@
 
 
     <application>
-        <activity android:name=".PixEditor">
+        <activity
+                android:name=".PixEditor"
+                android:windowSoftInputMode="adjustNothing">
         </activity>
 
+        <activity
+                android:name=".CropActivity"
+                android:windowSoftInputMode="adjustNothing">
+        </activity>
         <activity
                 android:name=".imageeditengine.ImageEditActivity"
                 android:windowSoftInputMode="adjustNothing">

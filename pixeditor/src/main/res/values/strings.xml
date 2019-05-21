@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PixEditor</string>
+
+    <string name="pick_image_intent_chooser_title">Select source</string>
 </resources>

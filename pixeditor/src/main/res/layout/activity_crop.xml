@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#000"
+        tools:context=".CropActivity"
+>
+
+    <com.fxn.pixeditor.imageeditengine.cropper.CropImageView
+            android:id="@+id/cropImageView"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    <LinearLayout
+            android:gravity="center_vertical"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+    >
+        <TextView
+                android:id="@+id/cancel"
+                android:padding="12dp"
+                android:textColor="#fff"
+                android:text="Cancel"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:textAllCaps="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+        />
+        <ImageView
+                android:padding="12dp"
+                android:id="@+id/rotate"
+                android:src="@drawable/ic_cam_crop_rotate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+        />
+        <TextView
+                android:id="@+id/done"
+                android:gravity="center"
+                android:padding="12dp"
+                android:textColor="#fff"
+                android:text="DOne"
+                android:layout_weight="1"
+                android:textAllCaps="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+        />
+    </LinearLayout>
+
+</LinearLayout>
