@@ -425,11 +425,10 @@ object CropImage {
 
         /** Get [CropImageActivity] intent to start the activity.  */
         @JvmOverloads
-        fun getIntent(@NonNull context: Context, @Nullable cls: Class<*> = CropImageActivity::class.java): Intent {
+        fun getIntent(@NonNull context: Context): Intent {
             mOptions.validate()
 
             val intent = Intent()
-            intent.setClass(context, cls)
             val bundle = Bundle()
             bundle.putParcelable(CROP_IMAGE_EXTRA_SOURCE, mSource)
             bundle.putParcelable(CROP_IMAGE_EXTRA_OPTIONS, mOptions)
@@ -454,7 +453,7 @@ object CropImage {
          */
         fun start(@NonNull activity: Activity, @Nullable cls: Class<*>) {
             mOptions.validate()
-            activity.startActivityForResult(getIntent(activity, cls), CROP_IMAGE_ACTIVITY_REQUEST_CODE)
+            activity.startActivityForResult(getIntent(activity), CROP_IMAGE_ACTIVITY_REQUEST_CODE)
         }
 
         /**
@@ -484,7 +483,7 @@ object CropImage {
         fun start(
             @NonNull context: Context, @NonNull fragment: Fragment, @Nullable cls: Class<*>
         ) {
-            fragment.startActivityForResult(getIntent(context, cls), CROP_IMAGE_ACTIVITY_REQUEST_CODE)
+            fragment.startActivityForResult(getIntent(context), CROP_IMAGE_ACTIVITY_REQUEST_CODE)
         }
 
         /**
@@ -496,7 +495,7 @@ object CropImage {
         private fun start(
             @NonNull context: Context, @NonNull fragment: android.app.Fragment, @Nullable cls: Class<*>
         ) {
-            fragment.startActivityForResult(getIntent(context, cls), CROP_IMAGE_ACTIVITY_REQUEST_CODE)
+            fragment.startActivityForResult(getIntent(context), CROP_IMAGE_ACTIVITY_REQUEST_CODE)
         }
 
         /**
@@ -931,8 +930,7 @@ object CropImage {
             wholeImageRect,
             rotation,
             sampleSize
-        ) {
-        }
+        )
 
         protected constructor(`in`: Parcel) : super(
             null,
@@ -944,8 +942,7 @@ object CropImage {
             `in`.readParcelable<Parcelable>(Rect::class.java.classLoader) as Rect,
             `in`.readInt(),
             `in`.readInt()
-        ) {
-        }
+        )
 
         override fun writeToParcel(dest: Parcel, flags: Int) {
             dest.writeParcelable(originalUri, flags)

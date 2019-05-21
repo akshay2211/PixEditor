@@ -18,6 +18,10 @@ android {
             commandLine "$ndkDir/ndk-build", '-j', Runtime.runtime.availableProcessors()
         }
     }
+    lintOptions {
+        abortOnError false
+    }
+
 
     tasks.withType(JavaCompile) { compileTask -> compileTask.dependsOn(ndkBuild)}
     defaultConfig {

@@ -205,15 +205,15 @@ internal class BitmapCroppingWorkerTask : AsyncTask<Void, Void, BitmapCroppingWo
                     return Result(null, 1)
                 }
 
-                val bitmap = BitmapUtils.resizeBitmap(bitmapSampled.bitmap, mReqWidth, mReqHeight, mReqSizeOptions)
+                val bitmap = BitmapUtils.resizeBitmap(bitmapSampled.bitmap!!, mReqWidth, mReqHeight, mReqSizeOptions)
 
                 if (mSaveUri == null) {
                     return Result(bitmap, bitmapSampled.sampleSize)
                 } else {
                     BitmapUtils.writeBitmapToUri(
-                        mContext, bitmap!!, mSaveUri, mSaveCompressFormat, mSaveCompressQuality
+                        mContext, bitmap, mSaveUri, mSaveCompressFormat, mSaveCompressQuality
                     )
-                    bitmap?.recycle()
+                    bitmap.recycle()
                     return Result(mSaveUri, bitmapSampled.sampleSize)
                 }
             }

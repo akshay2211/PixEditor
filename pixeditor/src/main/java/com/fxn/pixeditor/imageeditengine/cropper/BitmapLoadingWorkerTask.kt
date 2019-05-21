@@ -68,7 +68,7 @@ internal class BitmapLoadingWorkerTask
 
                 if (!isCancelled) {
 
-                    val rotateResult = BitmapUtils.rotateBitmapByExif(decodeResult.bitmap, mContext, uri)
+                    val rotateResult = BitmapUtils.rotateBitmapByExif(decodeResult.bitmap!!, mContext, uri)
 
                     return Result(
                         uri, rotateResult.bitmap, decodeResult.sampleSize, rotateResult.degrees

@@ -458,14 +458,16 @@ class CropImageOptions : Parcelable {
 
     companion object {
 
+        @JvmField
         val CREATOR: Parcelable.Creator<CropImageOptions> = object : Parcelable.Creator<CropImageOptions> {
             override fun createFromParcel(`in`: Parcel): CropImageOptions {
                 return CropImageOptions(`in`)
             }
 
-            override fun newArray(size: Int): Array<CropImageOptions> {
+            override fun newArray(size: Int): Array<CropImageOptions?> {
                 return arrayOfNulls(size)
             }
+
         }
     }
 }
