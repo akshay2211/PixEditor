@@ -6,6 +6,7 @@ import android.graphics.*
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.View.GONE
 import android.view.animation.Animation
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +23,7 @@ import com.fxn.pixeditor.imageeditengine.adapters.PreviewImageAdapter
 import com.fxn.pixeditor.imageeditengine.adapters.PreviewViewPagerAdapter
 import com.fxn.pixeditor.imageeditengine.filter.ApplyFilterTask
 import com.fxn.pixeditor.imageeditengine.filter.GetFiltersTask
+import com.fxn.pixeditor.imageeditengine.filter.ProcessingImage
 import com.fxn.pixeditor.imageeditengine.interfaces.OnSelectionStringListener
 import com.fxn.pixeditor.imageeditengine.interfaces.WorkFinish
 import com.fxn.pixeditor.imageeditengine.model.BitmapObject
@@ -32,14 +34,14 @@ import com.fxn.pixeditor.imageeditengine.views.VerticalSlideColorPicker
 import com.fxn.pixeditor.imageeditengine.views.ViewTouchListener
 import com.fxn.pixeditor.imageeditengine.views.imagezoom.ImageViewTouch
 import kotlinx.android.synthetic.main.activity_pix_editor.*
+import java.io.Serializable
 
 
 class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.FilterImageAdapterListener,
-    ViewTouchListener, Animation.AnimationListener {
-
+    ViewTouchListener, Animation.AnimationListener, Serializable {
+    private val requestCodePix: Int = 2201
     private lateinit var photoEditorView: PhotoEditorView
     private var currentMode: Int = 0
-    private lateinit var selectedFilter: ImageFilter
     private var filterLayoutHeight: Int = 0
     private lateinit var options: EditOptions
 
@@ -59,27 +61,7 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
         for (s in options.selectedlist) {
             listBitmap.add(BitmapObject(s))
         }
-        previewViewPagerAdapter.list.addAll(listBitmap)
-        val linearLayoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        mainViewPager.adapter = previewViewPagerAdapter
-        mainViewPager.offscreenPageLimit = options.selectedlist.size
-        if (options.selectedlist.size > 1) {
-            editRecyclerView.visibility = View.VISIBLE
-            var previewImageAdapter = PreviewImageAdapter(this)
-            previewImageAdapter.addImage(options.selectedlist)
-            previewImageAdapter.addOnSelectionListener(object : OnSelectionStringListener {
-                override fun onClick(Img: String, view: View, position: Int) {
-                    Log.e("position", "recycleview $position")
-
-                    mainViewPager.currentItem = position
-                }
-            })
-
-            editRecyclerView.apply {
-                layoutManager = linearLayoutManager
-                adapter = previewImageAdapter
-            }
-        }
+        resetupViewpagerAndBottomList()
         crop_btn.setOnClickListener(this)
         stickers_btn.setOnClickListener(this)
         add_text_btn.setOnClickListener(this)
@@ -87,6 +69,10 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
         done_btn.setOnClickListener(this)
         back_iv.setOnClickListener(this)
         delete_image.setOnClickListener(this)
+        add_more_btn.setOnClickListener(this)
+        if (options.addMoreImagesListener == null) {
+            add_more_btn.visibility = GONE
+        }
 
         color_picker_view.setOnColorChangeListener(
             object : VerticalSlideColorPicker.OnColorChangeListener {
@@ -177,17 +163,18 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
                     )
                     (filter_list_rv.adapter as FilterImageAdapter).lastCheckedPostion =
                         listBitmap[position].filterSelection
+                    GetFiltersTask(object : TaskCallback<ArrayList<ImageFilter>> {
+                        override fun onTaskDone(data: ArrayList<ImageFilter>) {
+                            val filterImageAdapter = filter_list_rv.adapter as FilterImageAdapter
+                            if (filterImageAdapter != null) {
+                                filterImageAdapter.setData(data)
+                                filterImageAdapter.notifyDataSetChanged()
+                            }
+                        }
+                    }, listBitmap[position].mainBitmap!!).execute()
                 }
             }
-            GetFiltersTask(object : TaskCallback<ArrayList<ImageFilter>> {
-                override fun onTaskDone(data: ArrayList<ImageFilter>) {
-                    val filterImageAdapter = filter_list_rv.adapter as FilterImageAdapter
-                    if (filterImageAdapter != null) {
-                        filterImageAdapter.setData(data)
-                        filterImageAdapter.notifyDataSetChanged()
-                    }
-                }
-            }, listBitmap[position].mainBitmap!!).execute()
+
         }
     }
 
@@ -222,7 +209,7 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
         var num = 0
         when {
             v.id == R.id.crop_btn -> {
-
+                setMode(MODE_NONE)
                 /*  if (selectedFilter != null) {
                       val i = Intent(this, CropActivity::class.java)
                       i.putExtra(CropActivity.CROP_STRING, listBitmap[mainViewPager.currentItem].path)
@@ -239,42 +226,63 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
             v.id == R.id.add_text_btn -> setMode(MODE_ADD_TEXT)
             v.id == R.id.paint_btn -> setMode(MODE_PAINT)
             v.id == R.id.back_iv -> onBackPressed()
+            v.id == R.id.add_more_btn -> {
+                setMode(MODE_NONE)
+                var list = ArrayList<String>()
+                for (s in listBitmap) {
+                    list.add(s.path)
+                }
+                options.addMoreImagesListener!!.addMore(this@PixEditor, list, requestCodePix)
+            }
             v.id == R.id.delete_image -> {
                 num = mainViewPager.currentItem
                 Log.e("check ", "num $num")
                 val s = listBitmap.removeAt(num)
-                previewViewPagerAdapter.list.clear()
-                previewViewPagerAdapter.list.addAll(listBitmap)
-                mainViewPager.adapter = previewViewPagerAdapter
-                mainViewPager.offscreenPageLimit = options.selectedlist.size
-                if (options.selectedlist.size > 1) {
-                    editRecyclerView.visibility = View.VISIBLE
-                    val linearLayoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-                    var previewImageAdapter = PreviewImageAdapter(this)
-                    var list = ArrayList<String>()
-                    for (s in listBitmap) {
-                        list.add(s.path)
-                    }
-                    previewImageAdapter.addImage(list)
-                    previewImageAdapter.addOnSelectionListener(object : OnSelectionStringListener {
-                        override fun onClick(Img: String, view: View, position: Int) {
-                            Log.e("position", "recycleview $position")
-
-                            mainViewPager.currentItem = position
-                        }
-                    })
-
-                    editRecyclerView.apply {
-                        layoutManager = linearLayoutManager
-                        adapter = previewImageAdapter
-                    }
-                }
+                resetupViewpagerAndBottomList()
                 if (num == 0) {
                     num += 1
                 } else {
                     num -= 1
                 }
-                mainViewPager.setCurrentItem(num)
+                mainViewPager.currentItem = num
+            }
+            v.id == R.id.done_btn -> {
+                synchronized(this@PixEditor) {
+
+                    for (count in 0 until listBitmap.size) {
+                        var item = listBitmap[count]
+                        synchronized(item) {
+
+                            if (item.imageFilter != null) {
+                                ApplyFilterTask(object : TaskCallback<Bitmap> {
+                                    override fun onTaskDone(data: Bitmap) {
+                                        if (data != null) {
+                                            ProcessingImage(getBitmapCache(data, count),
+                                                Utility.getCacheFilePath(this@PixEditor),
+                                                object : TaskCallback<String> {
+                                                    override fun onTaskDone(data: String) {
+
+                                                        Log.e("url data", "data" + data)
+                                                    }
+                                                }).execute()
+                                        }
+                                    }
+                                }, Bitmap.createBitmap(item.mainBitmap)).execute(item.imageFilter)
+                            } else {
+                                ProcessingImage(getBitmapCache(item.mainBitmap, count),
+                                    Utility.getCacheFilePath(this@PixEditor),
+                                    object : TaskCallback<String> {
+                                        override fun onTaskDone(data: String) {
+
+                                            Log.e("url data", "data" + data)
+                                        }
+                                    }).execute()
+                            }
+                            Log.e("url data", "seperator " + count)
+
+                        }
+                    }
+                }
             }
         }
     }
@@ -311,6 +319,7 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
     }
 
     override fun onFilterSelected(imageFilter: ImageFilter, pos: Int) {
+        listBitmap[mainViewPager.currentItem].imageFilter = imageFilter
         var mainImageView =
             mainViewPager.getChildAt(mainViewPager.currentItem).findViewById(R.id.image_iv) as ImageViewTouch
         listBitmap[mainViewPager.currentItem].filterSelection = pos
@@ -372,9 +381,10 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
         }
     }
 
-    private fun getBitmapCache(bitmap: Bitmap?): Bitmap {
-        var mainImageView =
-            mainViewPager.getChildAt(mainViewPager.currentItem).findViewById(R.id.image_iv) as ImageViewTouch
+    private fun getBitmapCache(bitmap: Bitmap?, pos: Int): Bitmap {
+        Log.e("viewpager ", "child " + mainViewPager.childCount + "   current ->" + pos)
+        var mainImageView = mainViewPager.getChildAt(pos).findViewById(R.id.image_iv) as ImageViewTouch
+        var photo_editor_view = mainViewPager.getChildAt(pos).findViewById(R.id.photo_editor_view) as PhotoEditorView
 
         val touchMatrix = mainImageView.imageViewMatrix
 
@@ -398,13 +408,13 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
         canvas.translate(dx.toFloat(), dy.toFloat())
         canvas.scale(scale_x, scale_y)
 
-        photoEditorView.isDrawingCacheEnabled = true
-        if (photoEditorView.drawingCache != null) {
-            canvas.drawBitmap(photoEditorView.drawingCache, 0f, 0f, null)
+        photo_editor_view.isDrawingCacheEnabled = true
+        if (photo_editor_view.drawingCache != null) {
+            canvas.drawBitmap(photo_editor_view.drawingCache, 0f, 0f, null)
         }
 
-        if (photoEditorView.paintBit != null) {
-            canvas.drawBitmap(photoEditorView.paintBit, 0f, 0f, null)
+        if (photo_editor_view.paintBit != null) {
+            canvas.drawBitmap(photo_editor_view.paintBit, 0f, 0f, null)
         }
 
         canvas.restore()
@@ -436,13 +446,60 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
         super.onActivityResult(requestCode1, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode1 == CropActivity.CROP_NUM) {
             //  var b = data!!.getByteArrayExtra(("cropdata")
-
-
             var bytes = data!!.getByteArrayExtra("cropdata") as ByteArray
             var bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
             listBitmap[mainViewPager.currentItem].mainBitmap = bmp
             setupimageFilter(mainViewPager.currentItem)
+        }
+        if (resultCode == Activity.RESULT_OK && requestCode1 == requestCodePix) {
+            var list = data!!.getStringArrayListExtra("image_results")
+            var Extraimages = ArrayList<BitmapObject>()
+            for (l in list) {
+                var check = true
+                Log.e("new List", "-> " + l)
+                for (s in listBitmap) {
+                    if (l == s.path) {
+                        Log.e("bitmap check", "-> " + s.path)
+                        Extraimages.add(s)
+                        check = false
+                    }
+                }
+                if (check) {
+                    Extraimages.add(BitmapObject(l))
+                }
+            }
+            listBitmap.clear()
+            listBitmap.addAll(Extraimages)
+            resetupViewpagerAndBottomList()
+        }
+    }
 
+    private fun resetupViewpagerAndBottomList() {
+        previewViewPagerAdapter.list.clear()
+        previewViewPagerAdapter.list.addAll(listBitmap)
+        mainViewPager.adapter = previewViewPagerAdapter
+        mainViewPager.offscreenPageLimit = options.selectedlist.size
+        if (options.selectedlist.size > 1) {
+            editRecyclerView.visibility = View.VISIBLE
+            val linearLayoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+            var previewImageAdapter = PreviewImageAdapter(this)
+            var list = ArrayList<String>()
+            for (s in listBitmap) {
+                list.add(s.path)
+            }
+            previewImageAdapter.addImage(list)
+            previewImageAdapter.addOnSelectionListener(object : OnSelectionStringListener {
+                override fun onClick(Img: String, view: View, position: Int) {
+                    Log.e("position", "recycleview $position")
+
+                    mainViewPager.currentItem = position
+                }
+            })
+
+            editRecyclerView.apply {
+                layoutManager = linearLayoutManager
+                adapter = previewImageAdapter
+            }
         }
     }
 }

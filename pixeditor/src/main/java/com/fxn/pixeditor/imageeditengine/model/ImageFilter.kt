@@ -1,8 +1,9 @@
 package com.fxn.pixeditor.imageeditengine.model
 
 import android.graphics.Bitmap
+import java.io.Serializable
 
-class ImageFilter {
+class ImageFilter : Serializable {
     var filterName: String
     var filterImage: Bitmap? = null
     var opacity = 255

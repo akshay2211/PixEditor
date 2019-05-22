@@ -7,7 +7,9 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.os.Environment
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -36,7 +38,7 @@ object Utility {
     fun tintDrawable(context: Context, @DrawableRes drawableRes: Int, colorCode: Int): Drawable? {
         val drawable = ContextCompat.getDrawable(context, drawableRes)
         if (drawable != null) {
-            drawable!!.mutate()
+            drawable.mutate()
             DrawableCompat.setTint(drawable, colorCode)
         }
         return drawable
@@ -79,13 +81,17 @@ object Utility {
             bmpFile.close()
             outputFile.absolutePath
         } catch (e: Exception) {
+            Log.e("show exception", "-> " + e.localizedMessage)
             null
         }
 
     }
 
     fun getCacheFilePath(context: Context): String {
-        return context.cacheDir.toString() + "edited_" + System.currentTimeMillis() + ".jpg"
+        return File(
+            Environment.getExternalStorageDirectory(),
+            "edited_" + System.currentTimeMillis() + ".jpg"
+        ).absolutePath
     }
 
     fun calculateInSampleSize(

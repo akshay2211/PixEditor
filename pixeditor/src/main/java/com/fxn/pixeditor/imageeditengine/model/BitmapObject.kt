@@ -4,8 +4,9 @@ import android.graphics.Bitmap
 import java.io.File
 
 class BitmapObject(val path: String) {
-    public var photoOrignal: File? = null
-    public var orignalBitmap: Bitmap? = null
-    public var mainBitmap: Bitmap? = null
-    public var filterSelection: Int = 0
+    var photoOrignal: File? = null
+    var orignalBitmap: Bitmap? = null
+    var mainBitmap: Bitmap? = null
+    var filterSelection: Int = 0
+    var imageFilter: ImageFilter? = null
 }

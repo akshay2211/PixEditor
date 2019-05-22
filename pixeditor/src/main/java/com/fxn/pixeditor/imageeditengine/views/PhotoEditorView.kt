@@ -105,10 +105,10 @@ class PhotoEditorView : FrameLayout, ViewTouchListener, KeyboardHeightProvider.K
         keyboardHeightProvider!!.setKeyboardHeightObserver(this)
 
         val gridLayoutManager = GridLayoutManager(getContext(), 4)
-        recyclerView.setLayoutManager(gridLayoutManager)
+        recyclerView.layoutManager = gridLayoutManager
 
         val stickerAdapter = StickerListAdapter(ArrayList())
-        recyclerView.setAdapter(stickerAdapter)
+        recyclerView.adapter = stickerAdapter
 
         view.post { keyboardHeightProvider!!.start() }
 
@@ -202,7 +202,7 @@ class PhotoEditorView : FrameLayout, ViewTouchListener, KeyboardHeightProvider.K
             })
         bottomImageView!!.visibility = View.VISIBLE
         topImageView!!.visibility = View.VISIBLE
-        recyclerView.setVisibility(View.GONE)
+        recyclerView.visibility = View.GONE
         containerView!!.bringToFront()
         //containerView.bringToFront();
         inputTextET.setText("")
@@ -237,7 +237,7 @@ class PhotoEditorView : FrameLayout, ViewTouchListener, KeyboardHeightProvider.K
 
             override fun onRemoveViewListener(removedView: View) {
                 container.removeView(removedView)
-                inputTextET.setText(null)
+                inputTextET.text = null
                 inputTextET.visibility = View.INVISIBLE
                 selectedView = null
             }
@@ -320,16 +320,16 @@ class PhotoEditorView : FrameLayout, ViewTouchListener, KeyboardHeightProvider.K
         bottomImageView!!.visibility = View.GONE
         topImageView!!.visibility = View.GONE
         containerView!!.bringToFront()
-        recyclerView.setVisibility(View.VISIBLE)
+        recyclerView.visibility = View.VISIBLE
         inputTextET.visibility = View.GONE
         Utility.hideSoftKeyboard(context as Activity)
         this.folderName = stickersFolder
-        val stickerListAdapter = recyclerView.getAdapter() as StickerListAdapter
-        stickerListAdapter?.setData(getStickersList(stickersFolder))
+        val stickerListAdapter = recyclerView.adapter as StickerListAdapter
+        stickerListAdapter.setData(getStickersList(stickersFolder))
     }
 
     fun hideStickers() {
-        recyclerView.setVisibility(View.GONE)
+        recyclerView.visibility = View.GONE
     }
 
     private fun getStickersList(folderName: String): MutableList<String>? {
@@ -343,7 +343,7 @@ class PhotoEditorView : FrameLayout, ViewTouchListener, KeyboardHeightProvider.K
                         return extractInt(o1) - extractInt(o2)
                     }
 
-                    internal fun extractInt(s: String): Int {
+                    fun extractInt(s: String): Int {
                         val num = s.replace("\\D".toRegex(), "")
                         // return 0 if no digits found
                         return if (num.isEmpty()) 0 else Integer.parseInt(num)
@@ -363,7 +363,7 @@ class PhotoEditorView : FrameLayout, ViewTouchListener, KeyboardHeightProvider.K
 
     @SuppressLint("ClickableViewAccessibility")
     fun onItemClick(bitmap: Bitmap?) {
-        recyclerView.setVisibility(View.GONE)
+        recyclerView.visibility = View.GONE
         bottomImageView!!.visibility = View.VISIBLE
         topImageView!!.visibility = View.VISIBLE
         val stickerImageView = LayoutInflater.from(context).inflate(R.layout.sticker_view, null) as ImageView
