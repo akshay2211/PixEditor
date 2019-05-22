@@ -179,6 +179,7 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
     }
 
     companion object {
+        var IMAGE_RESULTS = "image_results"
         val MODE_NONE = 0
         val MODE_PAINT = 1
         val MODE_ADD_TEXT = 2
@@ -247,6 +248,7 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
                 mainViewPager.currentItem = num
             }
             v.id == R.id.done_btn -> {
+                var resultList = ArrayList<String>()
                 synchronized(this@PixEditor) {
 
                     for (count in 0 until listBitmap.size) {
@@ -261,8 +263,19 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
                                                 Utility.getCacheFilePath(this@PixEditor),
                                                 object : TaskCallback<String> {
                                                     override fun onTaskDone(data: String) {
-
+                                                        resultList.add(data)
                                                         Log.e("url data", "data" + data)
+                                                        if (count == listBitmap.size - 1) {
+                                                            val resultIntent = Intent()
+                                                            resultIntent.putStringArrayListExtra(
+                                                                IMAGE_RESULTS,
+                                                                resultList
+                                                            )
+                                                            setResult(RESULT_OK, resultIntent)
+                                                            finish()
+                                                        }
+
+
                                                     }
                                                 }).execute()
                                         }
@@ -273,7 +286,17 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
                                     Utility.getCacheFilePath(this@PixEditor),
                                     object : TaskCallback<String> {
                                         override fun onTaskDone(data: String) {
-
+                                            resultList.add(data)
+                                            Log.e("url data", "data" + data)
+                                            if (count == listBitmap.size - 1) {
+                                                val resultIntent = Intent()
+                                                resultIntent.putStringArrayListExtra(
+                                                    IMAGE_RESULTS,
+                                                    resultList
+                                                )
+                                                setResult(RESULT_OK, resultIntent)
+                                                finish()
+                                            }
                                             Log.e("url data", "data" + data)
                                         }
                                     }).execute()
@@ -448,6 +471,7 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
             //  var b = data!!.getByteArrayExtra(("cropdata")
             var bytes = data!!.getByteArrayExtra("cropdata") as ByteArray
             var bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+            listBitmap[mainViewPager.currentItem].orignalBitmap = bmp
             listBitmap[mainViewPager.currentItem].mainBitmap = bmp
             setupimageFilter(mainViewPager.currentItem)
         }
