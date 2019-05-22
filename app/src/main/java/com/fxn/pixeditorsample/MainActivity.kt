@@ -10,6 +10,7 @@ import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.pixeditor.EditOptions
 import com.fxn.pixeditor.PixEditor
+import com.fxn.pixeditor.imageeditengine.interfaces.AddMoreImagesListener
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -35,6 +36,15 @@ class MainActivity : AppCompatActivity() {
             PixEditor.start(this@MainActivity, EditOptions.init().apply {
                 requestCode = RequestCodeEditor
                 selectedlist = returnValue
+                addMoreImagesListener = object : AddMoreImagesListener {
+                    override fun addMore(context: AppCompatActivity, list: ArrayList<String>, requestCodePix: Int) {
+                        Pix.start(context, Options.init().apply {
+                            requestCode = requestCodePix
+                            count = 5
+                            preSelectedUrls = list
+                        })
+                    }
+                }
 
             })
         }
