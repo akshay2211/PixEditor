@@ -77,6 +77,17 @@
         />
 
 
+
+        <ImageView
+                android:id="@+id/delete_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_toLeftOf="@+id/crop_btn"
+                android:layout_toStartOf="@+id/crop_btn"
+                android:padding="8dp"
+                android:src="@drawable/ic_cam_delete"
+        />
         <ImageView
                 android:id="@+id/crop_btn"
                 android:layout_width="wrap_content"
