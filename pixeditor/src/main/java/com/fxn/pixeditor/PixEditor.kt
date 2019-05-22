@@ -2,10 +2,7 @@ package com.fxn.pixeditor
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Matrix
+import android.graphics.*
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -223,14 +220,18 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
     override fun onClick(v: View) {
         when {
             v.id == R.id.crop_btn -> {
-                if (selectedFilter != null) {
-                    val i = Intent(this, CropActivity::class.java)
-                    i.putExtra(CropActivity.CROP_STRING, listBitmap[mainViewPager.currentItem].path)
-                    startActivityForResult(i, CropActivity.CROP_NUM)
-                } else {
-                    //  mListener!!.onCropClicked(getBitmapCache(listBitmap[mainViewPager.currentItem].orignalBitmap))
-                    photoEditorView.hidePaintView()
-                }
+
+                /*  if (selectedFilter != null) {
+                      val i = Intent(this, CropActivity::class.java)
+                      i.putExtra(CropActivity.CROP_STRING, listBitmap[mainViewPager.currentItem].path)
+                      startActivityForResult(i, CropActivity.CROP_NUM)
+                  } else {
+                      //  mListener!!.onCropClicked(getBitmapCache(listBitmap[mainViewPager.currentItem].orignalBitmap))
+                      photoEditorView.hidePaintView()
+                  }*/
+                val i = Intent(this, CropActivity::class.java)
+                i.putExtra(CropActivity.CROP_STRING, listBitmap[mainViewPager.currentItem].path)
+                startActivityForResult(i, CropActivity.CROP_NUM)
             }
             v.id == R.id.stickers_btn -> setMode(MODE_STICKER)
             v.id == R.id.add_text_btn -> setMode(MODE_ADD_TEXT)
@@ -358,8 +359,8 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
         canvas.translate(dx.toFloat(), dy.toFloat())
         canvas.scale(scale_x, scale_y)
 
-        photoEditorView.setDrawingCacheEnabled(true)
-        if (photoEditorView.getDrawingCache() != null) {
+        photoEditorView.isDrawingCacheEnabled = true
+        if (photoEditorView.drawingCache != null) {
             canvas.drawBitmap(photoEditorView.drawingCache, 0f, 0f, null)
         }
 
@@ -395,8 +396,12 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
     public override fun onActivityResult(requestCode1: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode1, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode1 == CropActivity.CROP_NUM) {
-            var b = data!!.getParcelableExtra<Bitmap>("cropdata")
-            listBitmap[mainViewPager.currentItem].mainBitmap = b
+            //  var b = data!!.getByteArrayExtra(("cropdata")
+
+
+            var bytes = data!!.getByteArrayExtra("cropdata") as ByteArray
+            var bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+            listBitmap[mainViewPager.currentItem].mainBitmap = bmp
 
         }
     }

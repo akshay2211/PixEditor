@@ -37,9 +37,6 @@ class MainActivity : AppCompatActivity() {
                 selectedlist = returnValue
 
             })
-            /* ImageEditor.Builder(this, returnValue[0])
-                 .setStickerAssets("stickers")
-                 .open()*/
         }
     }
 
