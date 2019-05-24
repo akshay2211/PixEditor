@@ -32,6 +32,7 @@ import java.util.*
 
 class PhotoEditorView : FrameLayout, ViewTouchListener, KeyboardHeightProvider.KeyboardHeightObserver {
 
+
     internal lateinit var container: RelativeLayout
     internal lateinit var recyclerView: RecyclerView
     internal lateinit var customPaintView: CustomPaintView
@@ -284,6 +285,14 @@ class PhotoEditorView : FrameLayout, ViewTouchListener, KeyboardHeightProvider.K
         if (viewTouchListener != null) {
             viewTouchListener!!.onStopViewChangeListener(view)
         }
+    }
+
+    override fun onStartViewFullChangeListener(view: View) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onStopViewFullChangeListener(view: View) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     private fun getViewChildAt(index: Int): View? {
