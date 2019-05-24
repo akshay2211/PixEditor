@@ -41,7 +41,6 @@ class CropActivity : AppCompatActivity() {
             bmp!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
             val bytes = stream.toByteArray()
 
-
             val i = Intent()
             i.putExtra("cropdata", bytes)
             setResult(Activity.RESULT_OK, i)

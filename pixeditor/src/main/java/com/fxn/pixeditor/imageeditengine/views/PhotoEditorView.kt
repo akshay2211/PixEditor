@@ -288,12 +288,18 @@ class PhotoEditorView : FrameLayout, ViewTouchListener, KeyboardHeightProvider.K
     }
 
     override fun onStartViewFullChangeListener(view: View) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Utility.hideSoftKeyboard(context as Activity)
+        if (viewTouchListener != null) {
+            viewTouchListener!!.onStartViewFullChangeListener(view)
+        }
     }
 
     override fun onStopViewFullChangeListener(view: View) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (viewTouchListener != null) {
+            viewTouchListener!!.onStopViewFullChangeListener(view)
+        }
     }
+
 
     private fun getViewChildAt(index: Int): View? {
         return if (index > container.childCount - 1) {

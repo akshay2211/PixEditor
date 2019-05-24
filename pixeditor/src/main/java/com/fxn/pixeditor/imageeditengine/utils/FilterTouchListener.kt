@@ -71,7 +71,7 @@ class FilterTouchListener(
                 val diff = screenHeight - mView.y
                 Log.e(FilterTouchListener::class.java.simpleName, "ACTION_UP$yPost $diff $middle")
                 if (diff < middle) {
-                    photoEditorView.onStartViewChangeListener(v)
+                    photoEditorView.onStopViewFullChangeListener(v)
                     mainViewPager.scrollerEnabled = true
                     mView.animate().translationY(viewHeight)
                     mainImageView.animate().scaleX(1f)
@@ -81,7 +81,7 @@ class FilterTouchListener(
                     filterLabel.animate().alpha(1f)
                     doneBtn.animate().alpha(1f)
                 } else {
-                    photoEditorView.onStopViewChangeListener(v)
+                    photoEditorView.onStartViewFullChangeListener(v)
                     mainViewPager.scrollerEnabled = false
                     mView.animate().translationY(0f)
                     mainImageView.animate().scaleX(0.7f)

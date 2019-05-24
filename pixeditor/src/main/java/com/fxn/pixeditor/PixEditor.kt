@@ -39,6 +39,8 @@ import java.io.Serializable
 
 class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.FilterImageAdapterListener,
     ViewTouchListener, Animation.AnimationListener, Serializable {
+
+
     private val requestCodePix: Int = 2201
     private lateinit var photoEditorView: PhotoEditorView
     private var currentMode: Int = 0
@@ -454,6 +456,18 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
         Log.i(ImageEditActivity::class.java.simpleName, "onStopViewChangeListener" + "" + view.id)
         delete_view.visibility = View.GONE
         AnimationHelper.animate(this@PixEditor, toolbar_layout, R.anim.fade_in_medium, View.VISIBLE, this@PixEditor)
+    }
+
+    override fun onStartViewFullChangeListener(view: View) {
+        AnimationHelper.animate(this@PixEditor, toolbar_layout, R.anim.fadeout, View.GONE, this@PixEditor)
+        AnimationHelper.animate(this@PixEditor, done_btn, R.anim.fadeout, View.GONE, this@PixEditor)
+
+    }
+
+    override fun onStopViewFullChangeListener(view: View) {
+        AnimationHelper.animate(this@PixEditor, toolbar_layout, R.anim.fade_in_medium, View.VISIBLE, this@PixEditor)
+        AnimationHelper.animate(this@PixEditor, done_btn, R.anim.fade_in_medium, View.VISIBLE, this@PixEditor)
+
     }
 
     override fun onAnimationRepeat(animation: Animation?) {

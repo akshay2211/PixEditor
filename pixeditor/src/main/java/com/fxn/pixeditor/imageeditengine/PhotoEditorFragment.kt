@@ -42,6 +42,12 @@ import java.util.*
 
 class PhotoEditorFragment : BaseFragment(), View.OnClickListener, ViewTouchListener,
     FilterImageAdapter.FilterImageAdapterListener, Animation.AnimationListener {
+    override fun onStartViewFullChangeListener(view: View) {
+    }
+
+    override fun onStopViewFullChangeListener(view: View) {
+    }
+
     override fun onAnimationRepeat(animation: Animation?) {
     }
 
@@ -143,10 +149,10 @@ class PhotoEditorFragment : BaseFragment(), View.OnClickListener, ViewTouchListe
 
         GetFiltersTask(object : TaskCallback<ArrayList<ImageFilter>> {
             override fun onTaskDone(data: ArrayList<ImageFilter>) {
-                val filterImageAdapter = filterRecylerview.getAdapter() as FilterImageAdapter
+                val filterImageAdapter = filterRecylerview.adapter as FilterImageAdapter
                 if (filterImageAdapter != null) {
-                    filterImageAdapter!!.setData(data)
-                    filterImageAdapter!!.notifyDataSetChanged()
+                    filterImageAdapter.setData(data)
+                    filterImageAdapter.notifyDataSetChanged()
                 }
             }
         }, mainBitmap!!).execute()
@@ -155,7 +161,7 @@ class PhotoEditorFragment : BaseFragment(), View.OnClickListener, ViewTouchListe
     private fun getScaledBitmap(resource: Bitmap): Bitmap {
         val currentBitmapWidth = resource.width
         val currentBitmapHeight = resource.height
-        val ivWidth = mainImageView.getWidth()
+        val ivWidth = mainImageView.width
         val newHeight = Math.floor(
             currentBitmapHeight.toDouble() * (ivWidth.toDouble() / currentBitmapWidth.toDouble())
         ).toInt()
@@ -249,7 +255,7 @@ class PhotoEditorFragment : BaseFragment(), View.OnClickListener, ViewTouchListe
                         val currentBitmapHeight = resource.height
                         mainImageView.invalidate()
                         try {
-                            val ivWidth = mainImageView.getWidth()
+                            val ivWidth = mainImageView.width
                             val newHeight = Math.floor(
                                 currentBitmapHeight.toDouble() * (ivWidth.toDouble() / currentBitmapWidth.toDouble())
                             ).toInt()
@@ -264,8 +270,8 @@ class PhotoEditorFragment : BaseFragment(), View.OnClickListener, ViewTouchListe
                             override fun onTaskDone(data: ArrayList<ImageFilter>) {
                                 val filterImageAdapter = filterRecylerview.adapter as FilterImageAdapter
                                 if (filterImageAdapter != null) {
-                                    filterImageAdapter!!.setData(data)
-                                    filterImageAdapter!!.notifyDataSetChanged()
+                                    filterImageAdapter.setData(data)
+                                    filterImageAdapter.notifyDataSetChanged()
                                 }
                             }
                         }, mainBitmap!!).execute()
@@ -524,8 +530,8 @@ class PhotoEditorFragment : BaseFragment(), View.OnClickListener, ViewTouchListe
         canvas.translate(dx.toFloat(), dy.toFloat())
         canvas.scale(scale_x, scale_y)
 
-        photoEditorView.setDrawingCacheEnabled(true)
-        if (photoEditorView.getDrawingCache() != null) {
+        photoEditorView.isDrawingCacheEnabled = true
+        if (photoEditorView.drawingCache != null) {
             canvas.drawBitmap(photoEditorView.drawingCache, 0f, 0f, null)
         }
 
