@@ -11,7 +11,6 @@ import android.os.Environment
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
-import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
@@ -136,11 +135,16 @@ object Utility {
     }
 
     fun hideTopBar(pixEditor: AppCompatActivity) {
-        val window = pixEditor.window
-        // clear FLAG_TRANSLUCENT_STATUS flag:
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        synchronized(pixEditor) {
+            val window = pixEditor.window
+            /* val decorView = window.decorView
+             // Hide Status Bar.
+             val uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN
+             decorView.systemUiVisibility = uiOptions
+         // clear FLAG_TRANSLUCENT_STATUS flag:
+         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+         // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)*/
         // finally change the color
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.statusBarColor = Color.BLACK
@@ -150,7 +154,18 @@ object Utility {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+        }
 
+    }
+
+    fun hideStatusBar(appCompatActivity: AppCompatActivity) {
+        synchronized(appCompatActivity) {
+            val w = appCompatActivity.window
+            val decorView = w.decorView
+            // Hide Status Bar.
+            val uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN
+            decorView.systemUiVisibility = uiOptions
+        }
     }
 
 }

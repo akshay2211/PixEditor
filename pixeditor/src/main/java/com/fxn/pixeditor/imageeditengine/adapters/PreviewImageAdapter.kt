@@ -30,7 +30,7 @@ class PreviewImageAdapter(private val context: Context) : RecyclerView.Adapter<R
 
     init {
         this@PreviewImageAdapter.list.clear()
-        size = Utility.convertDpToPixel(50f, context) - 2
+        size = Utility.convertDpToPixel(60f, context) - 2
         padding = (size / 3.5).toInt()
         glide = Glide.with(context)
         options = RequestOptions().override(256).transform(CenterCrop()).transform(FitCenter())

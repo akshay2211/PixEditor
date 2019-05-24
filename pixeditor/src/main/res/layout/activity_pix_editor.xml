@@ -47,7 +47,7 @@
                 android:id="@+id/editRecyclerView"
                 android:layout_width="match_parent"
                 android:visibility="gone"
-                android:layout_height="50dp">
+                android:layout_height="60dp">
         </androidx.recyclerview.widget.RecyclerView>
     </LinearLayout>
     <ImageView
@@ -152,8 +152,6 @@
                 android:visibility="invisible"
                 app:defaultColor="@color/checkbox_color"
         />
-
-
     </RelativeLayout>
 
 
@@ -179,8 +177,9 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:layout_margin="@dimen/fab_margin"
             app:srcCompat="@drawable/ic_done"
+            android:layout_marginBottom="86dp"
+            android:layout_marginRight="@dimen/fab_margin"
     />
 
     <RelativeLayout

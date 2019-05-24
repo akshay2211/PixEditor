@@ -49,8 +49,8 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_pix_editor)
         Utility.hideTopBar(this)
+        setContentView(R.layout.activity_pix_editor)
         options = intent.getSerializableExtra(EDITOPTIONS) as EditOptions
         initialise()
     }

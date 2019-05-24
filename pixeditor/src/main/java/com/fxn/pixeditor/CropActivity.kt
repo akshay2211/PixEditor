@@ -18,8 +18,8 @@ class CropActivity : AppCompatActivity() {
     private var photoOrignal: File? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         Utility.hideTopBar(this)
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_crop)
 
         /* Utility.setupStatusBarHidden(this);*/
