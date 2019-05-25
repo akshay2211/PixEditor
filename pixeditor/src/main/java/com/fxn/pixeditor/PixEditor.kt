@@ -100,7 +100,9 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
         filter_list_layout.post {
             filterLayoutHeight = filter_list_layout.height
             filter_list_layout.translationY = filterLayoutHeight.toFloat()
-            setupimageFilter(mainViewPager.currentItem)
+            mainViewPager.post {
+                setupimageFilter(mainViewPager.currentItem)
+            }
         }
         //  photoEditorView =   mainViewPager.getChildAt(0).findViewById(R.id.photo_editor_view) as PhotoEditorView
 
