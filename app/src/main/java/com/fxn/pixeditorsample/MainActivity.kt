@@ -17,7 +17,14 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), AddMoreImagesListener {
+    override fun addMore(context: AppCompatActivity, list: ArrayList<String>, requestCodePix: Int) {
+        Pix.start(context, Options.init().apply {
+            requestCode = requestCodePix
+            count = 5
+            preSelectedUrls = list
+        })
+    }
 
     private lateinit var editOptions: EditOptions
     private val RequestCode: Int = 100
@@ -34,23 +41,11 @@ class MainActivity : AppCompatActivity() {
         }
         editOptions = EditOptions.init().apply {
             requestCode = RequestCodeEditor
-            addMoreImagesListener = object : AddMoreImagesListener {
-                override fun addMore(
-                    context: AppCompatActivity,
-                    list: ArrayList<String>,
-                    requestCodePix: Int
-                ) {
-
-                    Pix.start(context, Options.init().apply {
-                        requestCode = requestCodePix
-                        count = 5
-                        preSelectedUrls = list
-                    })
-
-                }
+            addMoreImagesListener = this@MainActivity
             }
 
-        }
+
+
         fab.setOnClickListener { view ->
             Pix.start(this@MainActivity, Options.init().setRequestCode(RequestCode).setCount(5))
         }

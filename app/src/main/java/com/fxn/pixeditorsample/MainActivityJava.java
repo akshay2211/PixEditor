@@ -16,10 +16,11 @@ import com.fxn.pixeditor.EditOptions;
 import com.fxn.pixeditor.PixEditor;
 import com.fxn.pixeditor.imageeditengine.interfaces.AddMoreImagesListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
-public class MainActivityJava extends AppCompatActivity {
+public class MainActivityJava extends AppCompatActivity implements AddMoreImagesListener {
     EditOptions editoptions;
     private int RequestCode = 102;
 
@@ -31,15 +32,7 @@ public class MainActivityJava extends AppCompatActivity {
         setSupportActionBar(toolbar);
         editoptions = EditOptions.init();
         editoptions.setRequestCode(124);
-        editoptions.setAddMoreImagesListener(new AddMoreImagesListener() {
-            @Override
-            public void addMore(AppCompatActivity appCompatActivity,
-                                ArrayList<String> arrayList, int i) {
-                Pix.start(appCompatActivity, Options.init().setRequestCode(RequestCode)
-                        .setCount(i)
-                        .setPreSelectedUrls(arrayList));
-            }
-        });
+        editoptions.setAddMoreImagesListener(this);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -82,16 +75,19 @@ public class MainActivityJava extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void addMore(@NotNull AppCompatActivity context, @NotNull ArrayList<String> list, int requestCodePix) {
+        Pix.start(context, Options.init().setRequestCode(requestCodePix)
+                .setCount(5)
+                .setPreSelectedUrls(list));
     }
 }
