@@ -5,5 +5,4 @@ import java.io.Serializable
 
 interface AddMoreImagesListener : Serializable {
     fun addMore(context: AppCompatActivity, list: ArrayList<String>, requestCodePix: Int)
-    //fun addMore(requestCodePix : Int)
 }

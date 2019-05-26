@@ -9,6 +9,7 @@ class EditOptions : Serializable {
     var addMoreImagesListener: AddMoreImagesListener? = null
 
     companion object {
+        @JvmStatic
         fun init(): EditOptions {
             return EditOptions()
         }

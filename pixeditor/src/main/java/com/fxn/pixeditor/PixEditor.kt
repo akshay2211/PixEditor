@@ -9,6 +9,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.animation.Animation
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -58,6 +59,9 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
     val listBitmap = ArrayList<BitmapObject>()
     private lateinit var previewViewPagerAdapter: PreviewViewPagerAdapter
     private fun initialise() {
+        if (options.selectedlist.size == 0 || options.selectedlist == null) {
+            Toast.makeText(this@PixEditor, "selectedlist", Toast.LENGTH_LONG).show()
+        }
         previewViewPagerAdapter = PreviewViewPagerAdapter(this@PixEditor)
         listBitmap.clear()
         for (s in options.selectedlist) {
@@ -183,12 +187,20 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
     }
 
     companion object {
+        @JvmField
         var IMAGE_RESULTS = "image_results"
+        @JvmStatic
         val MODE_NONE = 0
+        @JvmStatic
         val MODE_PAINT = 1
+        @JvmStatic
         val MODE_ADD_TEXT = 2
+        @JvmStatic
         val MODE_STICKER = 3
+        @JvmStatic
         var EDITOPTIONS = "EDITOPTIONS"
+
+        @JvmStatic
         fun start(context: Fragment, options: EditOptions) {
             PermUtil.checkForCamaraWritePermissions(context, object : WorkFinish {
                 override fun onWorkFinish(check: Boolean?) {
@@ -199,12 +211,16 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
             })
         }
 
+        @JvmStatic
         fun start(context: FragmentActivity, options: EditOptions) {
             PermUtil.checkForCamaraWritePermissions(context, object : WorkFinish {
                 override fun onWorkFinish(check: Boolean?) {
                     val i = Intent(context, PixEditor::class.java)
                     i.putExtra(EDITOPTIONS, options)
-                    context.startActivityForResult(i, options.requestCode)
+                    context.startActivityForResult(
+                        i,
+                        options.requestCode
+                    )
                 }
             })
         }
