@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorPrimary">#03A9F4</color>
+    <color name="colorPrimaryDark">#03A9F4</color>
+    <color name="colorAccent">#03A9F4</color>
 
     <array name="default_colors">
         <item>#ff0000</item>
@@ -14,5 +14,5 @@
     <color name="white">#ffffff</color>
     <color name="transparent_black">#a34b4949</color>
     <color name="blackish">#2d2c2c</color>
-    <color name="checkbox_color">#ff0000</color>
+    <color name="checkbox_color">#03A9F4</color>
 </resources>

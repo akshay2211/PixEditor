@@ -59,7 +59,7 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
     val listBitmap = ArrayList<BitmapObject>()
     private lateinit var previewViewPagerAdapter: PreviewViewPagerAdapter
     private fun initialise() {
-        if (options.selectedlist.size == 0 || options.selectedlist == null) {
+        if (options.selectedlist.size == 0) {
             Toast.makeText(this@PixEditor, "selectedlist", Toast.LENGTH_LONG).show()
         }
         previewViewPagerAdapter = PreviewViewPagerAdapter(this@PixEditor)
@@ -173,7 +173,7 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
                         listBitmap[position].filterSelection
                     GetFiltersTask(object : TaskCallback<ArrayList<ImageFilter>> {
                         override fun onTaskDone(data: ArrayList<ImageFilter>) {
-                            val filterImageAdapter = filter_list_rv.adapter as FilterImageAdapter
+                            val filterImageAdapter = filter_list_rv.adapter as FilterImageAdapter?
                             if (filterImageAdapter != null) {
                                 filterImageAdapter.setData(data)
                                 filterImageAdapter.notifyDataSetChanged()
@@ -253,7 +253,9 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
                 for (s in listBitmap) {
                     list.add(s.path)
                 }
-                options.addMoreImagesListener!!.addMore(this@PixEditor, list, requestCodePix)
+                if (options.addMoreImagesListener != null) {
+                    options.addMoreImagesListener!!.addMore(this@PixEditor, list, requestCodePix)
+                }
             }
             v.id == R.id.delete_image -> {
                 num = mainViewPager.currentItem

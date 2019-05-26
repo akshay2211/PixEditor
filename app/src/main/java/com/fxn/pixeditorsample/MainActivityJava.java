@@ -19,7 +19,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
-public class MainActivity2 extends AppCompatActivity {
+public class MainActivityJava extends AppCompatActivity {
     EditOptions editoptions;
     private int RequestCode = 102;
 
@@ -45,7 +45,7 @@ public class MainActivity2 extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Pix.start(MainActivity2.this, Options.init()
+                Pix.start(MainActivityJava.this, Options.init()
                         .setRequestCode(RequestCode)
                         .setCount(5));
             }
@@ -62,7 +62,7 @@ public class MainActivity2 extends AppCompatActivity {
                 Log.e("data init", "->  " + s);
             }
             editoptions.setSelectedlist(returnValue);
-            PixEditor.start(MainActivity2.this, editoptions);
+            PixEditor.start(MainActivityJava.this, editoptions);
         }
 
         if (resultCode == Activity.RESULT_OK && requestCode1 == 124) {
