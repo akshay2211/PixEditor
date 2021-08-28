@@ -1,6 +1,6 @@
 
 
-# PixEditor   (WhatsApp Style Image Editor)
+# PixEditor   (WhatsApp Style Image Editor) [Depricated]
 
 PixEditor is a Whatsapp image Editor replica. with this you can integrate a image Editor just like whatsapp.
 
